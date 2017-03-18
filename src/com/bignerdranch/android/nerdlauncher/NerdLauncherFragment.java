@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -46,19 +47,22 @@ public class NerdLauncherFragment extends ListFragment {
 		});
 		
 		ArrayAdapter<ResolveInfo> adapter = new ArrayAdapter<ResolveInfo>(
-				getActivity(), android.R.layout.simple_list_item_1, activities) {
+				getActivity(), 0, activities) {
 
 					@Override
 					public View getView(int position, View convertView,
 							ViewGroup parent) {
 						PackageManager pm = getActivity().getPackageManager();
-						View v = super.getView(position, convertView, parent);
-						// Documentation says that simple_list_item_1 is a TextView,
-						// so cast it so that we can set its text value
-						TextView tv = (TextView)v;
+						if (convertView == null) {
+							convertView = getActivity().getLayoutInflater()
+									.inflate(R.layout.list_item_app, null);
+						}					
+						TextView tv = (TextView)convertView.findViewById(R.id.text_appName);
 						ResolveInfo ri = getItem(position);
 						tv.setText(ri.loadLabel(pm));
-						return v;
+						ImageView iconView = (ImageView)convertView.findViewById(R.id.image_appIcon);
+						iconView.setImageDrawable(ri.loadIcon(pm));
+						return convertView;
 					}
 			
 		};
